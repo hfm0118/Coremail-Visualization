@@ -3,17 +3,26 @@ let _height = $(window).height();
 let width = 512;
 let height = 512;
 
-function fdg_color(idx, specs) {
+fdg_nspecs = []
+fdg_lspecs = []
+
+let fdg_def = "#99ffff"
+let fdg_high = "#ff3366"
+let fdg_hover = "#ffff00"
+let fdg_line_def = "#a0a0a0"
+let fdg_line_high = "#cc66cc"
+
+function fdg_color(idx, specs=fdg_nspecs) {
     // highlight circle if idx is in specs
     if (specs) {
         if (specs.indexOf(idx) > 0) {
-            return d3.rgb(255,255,0)
+            return fdg_high
         }
     }
-    return d3.rgb(51,102,204)
+    return fdg_def
 }
 
-function fdg_line_color(efrom, eto, specs) {
+function fdg_line_color(efrom, eto, specs=fdg_lspecs) {
     // highlight circle if efrom,eto are in specs
     flag = 0;
     for (let i=0; i<specs.length; i=i+1) {
@@ -25,15 +34,15 @@ function fdg_line_color(efrom, eto, specs) {
         }
     }
     if (flag > 0) {
-        return d3.rgb(255,162,51)
+        return fdg_line_high
     }
-    return d3.rgb(144,144,144)
+    return fdg_line_def
 }
 
 function fdg_line_opacity(n) {
     // less transparent for more links
-    let val = 0.3+n/900
-    return val
+    // let val = 0.3+n/900
+    return 0.5
 }
 
 function fdg_radius(n) {
@@ -85,7 +94,7 @@ function draw_fdg(data) {
 
     // links
     let link = svg.append("g")
-        .attr("stroke", "#909090")
+        .attr("stroke", fdg_line_def)
         .selectAll("line")
         .data(links)
         .join("line")
@@ -94,19 +103,19 @@ function draw_fdg(data) {
 
     // nodes
     let node = svg.append("g")
-        .attr("stroke", "#d0d0d0")
+        .attr("stroke", "#505050")
         .attr("stroke-width", 0.5)
         .selectAll("circle")
         .data(nodes)
         .join("circle")
         .attr("r", d => fdg_radius(d.sum))
-        .attr("fill", "#3366cc")
+        .attr("fill", fdg_def)
         .attr("opacity", 0.75)
         .on("mouseover", function(d,i){
-            d3.select(this).attr("fill", "#ffff00")
+            d3.select(this).attr("fill", fdg_hover)
         })
         .on("mouseout", function(d,i){
-            d3.select(this).attr("fill", "#3366cc")
+            d3.select(this).attr("fill", d => fdg_color(d.id))
         })
         .call(drag(simulation));
 
@@ -133,23 +142,24 @@ function draw_fdg(data) {
 
 
 function fdg_highlight(link, node, lnks, emls) {
-    nspecs = []
-    lspecs = []
-    for (let i=0; i<emls.length; i=i+1) {
-        id = emls[i]
-        efrom = lnks[id][0];
-        eto = lnks[id][1];
-        lspecs.push([efrom, eto]);
-        nspecs.push(efrom)
-        nspecs.push(eto)
+    fdg_nspecs = []
+    fdg_lspecs = []
+    for (var i in lnks) {
+        if (i<emls.length && emls[i]==1) {
+            efrom = lnks[i][0];
+            eto = lnks[i][1];
+            fdg_lspecs.push([efrom, eto]);
+            fdg_nspecs.push(efrom);
+            fdg_nspecs.push(eto);
+        }
     }
-    link.attr("stroke", d => fdg_line_color(d.source.id, d.target.id, lspecs))
-    node.attr("fill", d => fdg_color(d.id, nspecs))
+    link.attr("stroke", d => fdg_line_color(d.source.id, d.target.id))
+    node.attr("fill", d => fdg_color(d.id))
 }
 
 function fdg_reset_highlight(link, node) {
-    link.attr("stroke", "#ff3366")
-    node.attr("fill", "#ffff00")
+    link.attr("stroke", fdg_line_def)
+    node.attr("fill", fdg_def)
 }
 
 function fdg_wrapper() {
@@ -157,8 +167,8 @@ function fdg_wrapper() {
     return draw_fdg(fdg_dat);
 }
 
-function fdg_highlight_wrapper(fdg, emls) {
-    // use this function to highlight all emails in emls
+function fdg_highlight_wrapper(fdg, emls) { 
+    // use this function to highlight all emails if emls[i]==1
     fdg_highlight(fdg[0], fdg[1], fdg_lnk, emls)
 }
 
@@ -168,4 +178,13 @@ function fdg_reset_wrapper(fdg) {
 }
 
 fdg = fdg_wrapper()
-// fdg_highlight_wrapper(fdg, [1,2,3])
+/*
+// usage example
+emls = []
+for (var i=1; i<5068; i=i+1) {
+    if (i<10) {emls.push(1);}
+    else {emls.push(0);}
+}
+fdg_highlight_wrapper(fdg, emls)
+// fdg_reset_wrapper(fdg)
+*/
