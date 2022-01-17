@@ -1,5 +1,5 @@
 # Coremail-Visualization
 
-Force-directed graph模块
+可以麻烦大家以文件夹而非压缩包形式上传代码吗qwq
 
-目前已有接口：fdg_wrapper, fdg_highlight_wrapper, fdg_reset_wrapper
+方便在线看代码和做小修改
