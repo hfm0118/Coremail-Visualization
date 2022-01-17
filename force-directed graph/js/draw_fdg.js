@@ -1,14 +1,15 @@
 let _width = $(window).width();
 let _height = $(window).height();
-let width = 512;
-let height = 512;
+let fdg_width = 512;
+let fdg_height = 512;
 
 fdg_nspecs = []
 fdg_lspecs = []
 
-let fdg_def = "#99ffff"
-let fdg_high = "#ff3366"
-let fdg_hover = "#ffff00"
+// define colors
+let fdg_def = "#99ffff" //default
+let fdg_high = "#ff3366" //highlight
+let fdg_hover = "#ffff00" //mouseover
 let fdg_line_def = "#a0a0a0"
 let fdg_line_high = "#cc66cc"
 
@@ -54,8 +55,8 @@ function fdg_radius(n) {
 function draw_fdg(data) {
     let svg = d3.select('#container')
         .select('svg')
-        .attr('width', width)
-        .attr('height', height);
+        .attr('width', fdg_width)
+        .attr('height', fdg_height);
 
     // let color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -64,8 +65,8 @@ function draw_fdg(data) {
 
     let simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(30))
-        .force("charge", d3.forceManyBody().strength(-10).distanceMax(0.2*height))
-        .force("center", d3.forceCenter(width/2, height/2))
+        .force("charge", d3.forceManyBody().strength(-10).distanceMax(0.2*fdg_height))
+        .force("center", d3.forceCenter(fdg_width/2, fdg_height/2))
 
     // apply forces when dragging
     function drag(simulation) {
