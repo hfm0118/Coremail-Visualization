@@ -34,7 +34,7 @@ function set_ui() {
 
 function draw_main(x0, y0, width, height) {
     let padding = {'left': 0.2*width, 'bottom': 0.1*height, 'top': 0.2*height, 'right': 0.1*width};
-    let svg = d3.select('#container')
+    let svg = d3.select('#SPcontainer')
         .select('svg')
         .attr('width', width)
         .attr('height', height)
