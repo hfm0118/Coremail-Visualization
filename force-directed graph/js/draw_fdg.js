@@ -53,7 +53,7 @@ function fdg_radius(n) {
 }
 
 function draw_fdg(data) {
-    let svg = d3.select('#container')
+    let svg = d3.select('#fdg_container')
         .select('svg')
         .attr('width', fdg_width)
         .attr('height', fdg_height);
